@@ -2,7 +2,9 @@ package com.github.netkex.mindmap
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
@@ -12,10 +14,12 @@ import kotlin.math.*
 private const val arrowSize = 25f
 
 class MMIdea(
-    val text: String,
+    text: String,
     val posX: Float,
     val posY: Float,
-    val fontSize: Float = 25f) {
+    val color: Color,
+    val fontSize: Float = 25f
+) {
 
     private val subIdeas: MutableList<MMIdea> = mutableListOf()
     private val stroke = 8f
@@ -35,15 +39,15 @@ class MMIdea(
     }
 
     fun drawIdea(drawScope: DrawScope, windowWidth: Float, windowHeight: Float) {
-        drawBody(drawScope, windowWidth, windowHeight)
         subIdeas.forEach { subIdea ->
             drawEdgeTo(drawScope, subIdea, windowWidth, windowHeight)
         }
+        drawBody(drawScope, windowWidth, windowHeight)
     }
 
     private fun drawBody(drawScope: DrawScope, windowWidth: Float, windowHeight: Float) {
         drawScope.drawOval(
-            color = Color.Magenta,
+            color = color,
             topLeft = Offset(
                 x = windowWidth * posX - width / 2,
                 y = windowHeight * posY - height / 2,
@@ -90,22 +94,32 @@ class MMIdea(
         )
         val v1 = (pt1 - pt2).normalise().rotate(-PI.toFloat() / 6) * arrowSize
         val v2 = (pt1 - pt2).normalise().rotate(PI.toFloat() / 6) * arrowSize
+        val brush = Brush.verticalGradient(
+            colors = listOf(
+                color,
+                idea.color
+            ),
+            startY = pt1.y,
+            endY = pt2.y,
+            tileMode = TileMode.Repeated
+        )
         drawScope.drawLine(
             start = Offset(pt1.x, pt1.y),
             end = Offset(pt2.x, pt2.y),
-            color = Color.Magenta,
-            strokeWidth = stroke
+//            color = color,
+            strokeWidth = stroke,
+            brush = brush
         )
         drawScope.drawLine(
             start = Offset(pt2.x, pt2.y),
             end = Offset((pt2 + v1).x, (pt2 + v1).y),
-            color = Color.Magenta,
+            color = idea.color,
             strokeWidth = stroke / 3
         )
         drawScope.drawLine(
             start = Offset(pt2.x, pt2.y),
             end = Offset((pt2 + v2).x, (pt2 + v2).y),
-            color = Color.Magenta,
+            color = idea.color,
             strokeWidth = stroke / 3
         )
     }
