@@ -1,5 +1,6 @@
 package com.github.netkex.mindmap
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -64,129 +65,27 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.IconLoader
 
-@Composable
-fun logList(modifier: Modifier = Modifier, log: List<String>) {
-    LazyColumn(modifier = modifier) {
-        items(log.toList()) { message ->
-            Text(message)
-        }
-    }
-}
-
-@Composable
-fun countButton(
-    modifier: Modifier = Modifier,
-    count: Int,
-    updateCount: (Int) -> Unit,
-    text: String
-) {
-    Button(modifier = modifier,
-        onClick = {
-            updateCount(count + 1)
-        }) {
-        Text(text)
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun keyBoardWindow(name: String, endTextEvent: (String) -> Unit) {
-    var text by remember { mutableStateOf("") }
-    Column(Modifier.fillMaxSize(), Arrangement.spacedBy(5.dp)) {
-        Text(modifier = Modifier.align(Alignment.CenterHorizontally), text = name)
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            modifier = Modifier.fillMaxWidth().onKeyEvent {
-                when {
-                    (it.key == Key.Enter) -> {
-                        endTextEvent(text.dropLast(1))
-                        text = ""
-                        true
-                    }
-                    else -> false
-                }
-            }
-        )
-    }
-}
-
-@Composable
-fun myApp(content: @Composable () -> Unit) {
-    Surface {
-        content()
-    }
-}
-
 
 @Composable
 fun mindMapApp(context: Context) {
-    println("minMapApp intro")
-    var countAdd by remember { context.countAdd }
-    var countDelete by remember { context.countDelete }
-    var keyboardFlag by remember { context.keyboardFlag }
-    var keyboardAction by remember { context.keyboardAction }
-    var keyboardActionName by remember { context.keyboardActionName }
-    var texts by remember { context.texts }
-    myApp {
-        if (!keyboardFlag) {
-            Column(modifier = Modifier.fillMaxSize().fillMaxHeight()) {
-                Column(modifier = Modifier.weight(1f).align(Alignment.CenterHorizontally)) {
-                    logList(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        log = texts
-                    )
-                }
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Absolute.SpaceBetween) {
-                    countButton(
-                        modifier = Modifier,
-                        count = countAdd,
-                        updateCount = { countNew ->
-                            countAdd = countNew
-                            keyboardFlag = true
-                            keyboardAction = { text ->
-                                texts.add(text)
-                                keyboardFlag = false
-                            }
-                            keyboardActionName = "Write log to add"
-                        },
-                        "Add Count: $countAdd"
-                    )
-
-                    countButton(
-                        modifier = Modifier,
-                        count = countDelete,
-                        updateCount = { countNew ->
-                            countDelete = countNew
-                            keyboardFlag = true
-                            keyboardAction = { text ->
-                                texts = texts.filter { it != text }.toMutableList()
-                                keyboardFlag = false
-                            }
-                            keyboardActionName = "Write log to delete"
-                        },
-                        "Delete Count: $countDelete"
-                    )
-                }
+    Surface(modifier = Modifier) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val canvasWidth = size.width
+            val canvasHeight = size.height
+            context.plan.value.forEach { idea ->
+                idea.drawIdea(this, canvasWidth, canvasHeight)
             }
-        } else {
-            keyBoardWindow(keyboardActionName, keyboardAction)
         }
     }
 }
-//IconLoader.getIcon("META-INF/pluginIcon.svg")
-//DumbAwareAction(null, null, null)
 
 class PanelAction : DumbAwareAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val p = e.project
-        println("I was activated")
         println("Project is: $p")
         if (p == null) {
             return
         }
-
         ToolWindowManager.getInstance(p).getToolWindow("MindMap")?.show()
     }
 
@@ -197,11 +96,9 @@ class PanelAction : DumbAwareAction() {
 
     companion object {
         fun createPanel(context: Context): JComponent {
-            println("I was called")
             return ComposePanel().apply {
-                setBounds(0, 0, 1600, 1000)
+                setBounds(0, 0, 1920, 1080)
                 setContent {
-                    println("Maybe me")
                     mindMapApp(context)
                 }
             }

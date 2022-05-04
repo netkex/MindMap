@@ -12,13 +12,20 @@ import org.jetbrains.kotlin.psi.KtImportDirective
  * Implements an inspection to detect imports.
  */
 class MindMapConstructorInteractor : LocalInspectionTool() {
-    override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
-        println("Please do anything")
-        println(file)
-        println(file.fileType.description)
-        println(file.text)
-        println()
-        println(file.project)
+    val parser = MMParser()
+    override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor> {
+        println("Was update: ${file.text}")
+        try {
+            val plan = parser.parse(file.text)
+            Context.plan.value = plan
+            println("MindMap was updated")
+        } catch (e: MindMapParserException) {}
+//        println("Please do anything")
+//        println(file)
+//        println(file.fileType.description)
+//        println(file.text)
+//        println()
+//        println(file.project)
         return arrayOf()
     }
 

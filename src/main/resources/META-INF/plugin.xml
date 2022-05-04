@@ -8,10 +8,10 @@
     <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-<!--        <toolWindow factoryClass="com.github.netkex.mindmap.ComposeToolWindow"-->
-<!--                    id="MindMap"-->
-<!--                    icon="AllIcons.Actions.Colors"-->
-<!--                    anchor="right"/>-->
+        <toolWindow factoryClass="com.github.netkex.mindmap.ComposeToolWindow"
+                    id="MindMap"
+                    icon="AllIcons.Actions.Colors"
+                    anchor="right"/>
         <localInspection language="TEXT"
                          displayName="SDK: import used"
                          groupPath="Kotlin"
@@ -23,11 +23,11 @@
     </extensions>
 
     <actions>
-<!--        <action id="com.github.netkex.mindmap.Panel"-->
-<!--                class="com.github.netkex.mindmap.PanelAction"-->
-<!--                icon="AllIcons.Actions.Colors"-->
-<!--                text="Mind Map">-->
-<!--            <add-to-group group-id="ToolsMenu" anchor="last"/>-->
-<!--        </action>-->
+        <action id="com.github.netkex.mindmap.Panel"
+                class="com.github.netkex.mindmap.PanelAction"
+                icon="AllIcons.Actions.Colors"
+                text="Mind Map">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
     </actions>
 </idea-plugin>
