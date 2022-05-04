@@ -23,12 +23,8 @@ class MMParser {
             val (tabs, idea) = buildIdea(s)
             if (tabs > prevTabs + 1)
                 throw MindMapParserException()
-            if (tabs > 0) {
-                println(ideasStack[tabs - 1].text)
-                println(idea.text)
-                println()
+            if (tabs > 0)
                 ideasStack[tabs - 1].addIdea(idea)
-            }
             while (ideasStack.size > tabs) {
                 ideasStack.pop()
             }

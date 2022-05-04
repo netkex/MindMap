@@ -14,18 +14,12 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 class MindMapConstructorInteractor : LocalInspectionTool() {
     val parser = MMParser()
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor> {
-        println("Was update: ${file.text}")
+        println("Was update: ${file.name}")
         try {
             val plan = parser.parse(file.text)
             Context.plan.value = plan
-            println("MindMap was updated")
+            println("MindMap Plan was updated by file ${file.name}")
         } catch (e: MindMapParserException) {}
-//        println("Please do anything")
-//        println(file)
-//        println(file.fileType.description)
-//        println(file.text)
-//        println()
-//        println(file.project)
         return arrayOf()
     }
 
