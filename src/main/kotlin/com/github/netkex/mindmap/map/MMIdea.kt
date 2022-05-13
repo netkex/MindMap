@@ -17,7 +17,7 @@ import kotlin.math.*
 private const val arrowSize = 25f
 
 class MMIdea(
-    private var text: String,
+    var text: String,
     posX_: Float,
     posY_: Float,
     private var color: Color = Color.Magenta,
@@ -66,7 +66,7 @@ class MMIdea(
             val windowWidth = size.width
             val windowHeight = size.height
             drawOval(
-                color = Color.Magenta,
+                color = color,
                 topLeft = Offset(
                     x = windowWidth / 2 - width / 2,
                     y = windowHeight / 2 - height / 2,

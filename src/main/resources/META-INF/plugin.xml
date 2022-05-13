@@ -23,8 +23,8 @@
     </extensions>
 
     <actions>
-        <action id="com.github.netkex.mindmap.Panel"
-                class="com.github.netkex.mindmap.UI.PanelAction"
+        <action id="com.github.netkex.mindmap.UI.MainWindow"
+                class="com.github.netkex.mindmap.UI.WindowAction"
                 icon="AllIcons.Actions.Colors"
                 text="Mind Map">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
