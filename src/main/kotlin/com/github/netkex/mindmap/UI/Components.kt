@@ -34,12 +34,10 @@ fun drawIdeaButton(idea: MMIdea, actionPanel: ContextActionPanel, canvasWidth: F
     val butSizeYDp = with(LocalDensity.current) {
         butSizeY.toInt().toDp()
     }
-    val ideaPosX by remember { idea.posX }
-    val ideaPosY by remember { idea.posY }
     Button(
         onClick = {
             val actionList = mutableListOf(ContextActions.CHANGE_COLOR, ContextActions.ADD_IDEA, ContextActions.RENAME)
-            if (Context.plan.value.size != 1 && idea.isLeaf()) {
+            if (Context.plan.size != 1 && idea.isLeaf()) {
                 actionList += ContextActions.REMOVE_IDEA
             }
             actionPanel.pressedIdeaButton(idea, actionList)
@@ -47,16 +45,16 @@ fun drawIdeaButton(idea: MMIdea, actionPanel: ContextActionPanel, canvasWidth: F
         modifier = Modifier
             .offset {
                 IntOffset(
-                    (canvasWidth * ideaPosX - butSizeX / 2).roundToInt(),
-                    (canvasHeight * ideaPosY - butSizeY / 2).roundToInt()
+                    (canvasWidth * idea.posX - butSizeX / 2).roundToInt(),
+                    (canvasHeight * idea.posY - butSizeY / 2).roundToInt()
                 )
             }
             .size(width = butSizeXDp, height = butSizeYDp)
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consumeAllChanges()
-                    idea.posX.value += dragAmount.x / canvasWidth
-                    idea.posY.value += dragAmount.y / canvasHeight
+                    idea.posX += dragAmount.x / canvasWidth
+                    idea.posY += dragAmount.y / canvasHeight
                 }
             },
         colors = ButtonDefaults.buttonColors(Color.White),

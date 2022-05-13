@@ -11,7 +11,7 @@ import com.intellij.ui.content.ContentFactory
 
 
 object Context {
-    val plan: MutableState<MMap> = mutableStateOf( listOf() )
+    var plan by mutableStateOf( listOf<MMIdea>() )
 }
 
 class ComposeToolWindow : ToolWindowFactory, DumbAware {
@@ -19,7 +19,7 @@ class ComposeToolWindow : ToolWindowFactory, DumbAware {
         println("Start Plugin")
         val mainIdea = MMIdea("Main idea", 0.5f, 0.5f)
         val plan = listOf( mainIdea )
-        Context.plan.value = plan
+        Context.plan = plan
         val content = ContentFactory.SERVICE.getInstance().createContent(
             WindowAction.createPanel(Context),
             "MindMap",

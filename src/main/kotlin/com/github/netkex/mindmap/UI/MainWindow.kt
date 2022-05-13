@@ -21,7 +21,6 @@ import com.intellij.openapi.project.DumbAwareAction
 fun mindMapApp(context: Context) {
     Surface(modifier = Modifier) {
         val actionPanel by remember { mutableStateOf(ContextActionPanel()) }
-        val plan by remember { context.plan }
         BoxWithConstraints(modifier = Modifier.fillMaxHeight().fillMaxWidth().background(color = Color.White)
             .pointerInput(Unit) {
                 detectTapGestures { _ ->
@@ -31,7 +30,7 @@ fun mindMapApp(context: Context) {
             var canvasWidth_ by remember { mutableStateOf(constraints.maxWidth.toFloat()) }
             var canvasHeight_ by remember { mutableStateOf(constraints.maxHeight.toFloat()) }
 
-            plan.forEach { idea ->
+            Context.plan.forEach { idea ->
                 drawIdeaButton(idea, actionPanel, canvasWidth_, canvasHeight_)
             }
 
@@ -41,7 +40,7 @@ fun mindMapApp(context: Context) {
                 canvasWidth_ = canvasWidth
                 canvasHeight_ = canvasHeight
 
-                context.plan.value.forEach { idea ->
+                context.plan.forEach { idea ->
                     idea.drawEdges(this)
                 }
             }

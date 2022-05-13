@@ -31,8 +31,8 @@ class MMIdea(
     private var textLine = TextLine.make(text, font)
 
     // relative coordinates of idea
-    var posX = mutableStateOf(posX_)
-    var posY = mutableStateOf(posY_)
+    var posX by mutableStateOf(posX_)
+    var posY by mutableStateOf(posY_)
 
     // box parameters of idea
     var width by mutableStateOf( recalculateWidth()  )
@@ -95,8 +95,8 @@ class MMIdea(
 
     fun copy(): MMIdea {
         return MMIdea(text = text,
-            posX_ = posX.value,
-            posY_ = posY.value,
+            posX_ = posX,
+            posY_ = posY,
             color = color,
             fontSize = fontSize,
             stroke = stroke)
@@ -136,10 +136,10 @@ class MMIdea(
         val windowWidth = drawScope.size.width
         val windowHeight = drawScope.size.height
 
-        val ideaCenterX = posX.value * windowWidth
-        val ideaCenterY = posY.value * windowHeight
-        val subIdeaCenterX = subIdea.posX.value * windowWidth
-        val subIdeaCenterY = subIdea.posY.value * windowHeight
+        val ideaCenterX = posX * windowWidth
+        val ideaCenterY = posY * windowHeight
+        val subIdeaCenterX = subIdea.posX * windowWidth
+        val subIdeaCenterY = subIdea.posY * windowHeight
 
         val angleToSubIdea = atan2(subIdeaCenterY - ideaCenterY, subIdeaCenterX - ideaCenterX)
         val angleToIdea = atan2(ideaCenterY - subIdeaCenterY, ideaCenterX - subIdeaCenterX)

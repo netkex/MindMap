@@ -70,7 +70,7 @@ class ContextActionPanel {
         val curIdea = currentAttachedIdea
         closeAll()
         if (curIdea != null) {
-            Context.plan.value = Context.plan.value.removeIdea(curIdea)
+            Context.plan = Context.plan.removeIdea(curIdea)
         }
     }
     private val contextActionsMap = mapOf(
@@ -122,8 +122,8 @@ class ContextActionPanel {
     private fun drawMaiMenu(idea: MMIdea, canvasWidth: Float, canvasHeight: Float) {
         LazyColumn(modifier = Modifier.offset {
             IntOffset(
-                (canvasWidth * idea.posX.value).roundToInt(),
-                (canvasHeight * idea.posY.value).roundToInt()
+                (canvasWidth * idea.posX).roundToInt(),
+                (canvasHeight * idea.posY).roundToInt()
             ) }
             .size(panelWidth, panelHeight),
             verticalArrangement = Arrangement.spacedBy(0.dp),
@@ -147,8 +147,8 @@ class ContextActionPanel {
     private fun drawColorMenu(idea: MMIdea, canvasWidth: Float, canvasHeight: Float) {
         LazyColumn(modifier = Modifier.offset {
             IntOffset(
-                (canvasWidth * idea.posX.value).roundToInt(),
-                (canvasHeight * idea.posY.value).roundToInt()
+                (canvasWidth * idea.posX).roundToInt(),
+                (canvasHeight * idea.posY).roundToInt()
             ) }
             .size(panelWidth, panelHeight),
             verticalArrangement = Arrangement.spacedBy(0.dp),
@@ -191,11 +191,11 @@ class ContextActionPanel {
                         println("New idea name: ${text}")
                         closeAll()
                         val newIdea = idea.copy()
-                        newIdea.posX.value += 0.05f
-                        newIdea.posY.value += 0.05f
+                        newIdea.posX += 0.05f
+                        newIdea.posY += 0.05f
                         newIdea.changeText(text)
                         idea.addSubIdea(newIdea)
-                        Context.plan.value = Context.plan.value.addIdea(newIdea)
+                        Context.plan = Context.plan.addIdea(newIdea)
                         Pair("", true)
                     }
                 }
@@ -235,8 +235,8 @@ class ContextActionPanel {
                       onKeyEvent: (KeyEvent, String) -> Pair<String, Boolean> = { _, text -> Pair(text, false) }) {
         Box(modifier = Modifier.offset {
             IntOffset(
-                (canvasWidth * idea.posX.value).roundToInt(),
-                (canvasHeight * idea.posY.value).roundToInt())
+                (canvasWidth * idea.posX).roundToInt(),
+                (canvasHeight * idea.posY).roundToInt())
         }
             .width(panelWidth)
             .background(color = Color(0xFFE0FFFF))) {
