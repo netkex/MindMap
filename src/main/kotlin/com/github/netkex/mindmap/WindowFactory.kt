@@ -11,20 +11,15 @@ import com.intellij.ui.content.ContentFactory
 
 
 object Context {
-    val plan: MutableState<MMap> = mutableStateOf( mutableListOf() )
+    val plan: MutableState<MMap> = mutableStateOf( listOf() )
 }
 
 class ComposeToolWindow : ToolWindowFactory, DumbAware {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         println("Start Plugin")
-        val ideaProg = MMIdea("Programming", 0.5f, 0.5f)
-        val ideaMath = MMIdea("Matsdsadasdasd h", 0.25f, 0.25f)
-        ideaProg.addSubIdea(ideaMath)
-        val plan = listOf(
-            ideaProg,
-            ideaMath
-        )
-        Context.plan.value = plan.toMutableList()
+        val mainIdea = MMIdea("Main idea", 0.5f, 0.5f)
+        val plan = listOf( mainIdea )
+        Context.plan.value = plan
         val content = ContentFactory.SERVICE.getInstance().createContent(
             WindowAction.createPanel(Context),
             "MindMap",

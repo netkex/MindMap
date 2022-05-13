@@ -1,12 +1,12 @@
 package com.github.netkex.mindmap.map
 
-typealias MMap = MutableList<MMIdea>
+typealias MMap = List<MMIdea>
 
-fun MMap.removeIdea(idea: MMIdea) {
-    this.remove(idea)
-    this.forEach { curIdea -> curIdea.removeSubIdea(idea) }
+fun MMap.removeIdea(idea: MMIdea): MMap {
+    this.forEach { it.removeSubIdea(idea) }
+    return this.filter { it != idea }
 }
 
-fun MMap.addIdea(idea: MMIdea) {
-    this.add(idea)
+fun MMap.addIdea(idea: MMIdea): MMap {
+    return this + idea
 }

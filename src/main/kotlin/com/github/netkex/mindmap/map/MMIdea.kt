@@ -1,6 +1,8 @@
 package com.github.netkex.mindmap.map
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -33,10 +35,8 @@ class MMIdea(
     var posY = mutableStateOf(posY_)
 
     // box parameters of idea
-    val width: Float
-        get() = textLine.width * (if (text.length < 4) 2f - text.length / 10 else 1.3f)
-    val height: Float
-        get() = width / 2f
+    var width by mutableStateOf( recalculateWidth()  )
+    var height by mutableStateOf( recalculateHeight() )
 
     // ellipse parameters
     private val semiMajorAxe
@@ -51,6 +51,8 @@ class MMIdea(
     fun changeText(newText: String) {
         text = newText
         textLine = TextLine.make(text, font)
+        width = recalculateWidth()
+        height = recalculateHeight()
     }
 
     fun addSubIdea(idea: MMIdea) {
@@ -85,6 +87,27 @@ class MMIdea(
         subIdeas.forEach { subIdea ->
             drawEdgeTo(drawScope, subIdea)
         }
+    }
+
+    fun isLeaf(): Boolean {
+        return subIdeas.isEmpty()
+    }
+
+    fun copy(): MMIdea {
+        return MMIdea(text = text,
+            posX_ = posX.value,
+            posY_ = posY.value,
+            color = color,
+            fontSize = fontSize,
+            stroke = stroke)
+    }
+
+    private fun recalculateWidth(): Float {
+        return textLine.width * (if (text.length < 4) 2f - text.length / 10 else 1.3f)
+    }
+
+    private fun recalculateHeight(): Float {
+        return width / 2f
     }
 
     private fun drawText(drawScope: DrawScope) {
@@ -146,6 +169,7 @@ class MMIdea(
                 (ideaPointOnEllipse - subIdeaPointOnEllipse).normalise().rotate(-PI.toFloat() / 6) * arrowSize
             val arrowVector2 =
                 (ideaPointOnEllipse - subIdeaPointOnEllipse).normalise().rotate(PI.toFloat() / 6) * arrowSize
+            val vectorToSubIdea = subIdeaPointOnEllipse - ideaPointOnEllipse
 
             val brush = if (abs(abs(angleToSubIdea) - PI / 2) < PI / 4) {
                 Brush.verticalGradient(
@@ -176,6 +200,15 @@ class MMIdea(
                 brush = brush
             )
             drawLine(
+                start = Offset(ideaPointOnEllipse.x, ideaPointOnEllipse.y),
+                end = Offset(
+                    (ideaPointOnEllipse + vectorToSubIdea * 0.1f).x,
+                    (ideaPointOnEllipse + vectorToSubIdea * 0.1f).y),
+                color = color,
+                strokeWidth = stroke
+            )
+
+            drawLine(
                 start = Offset(subIdeaPointOnEllipse.x, subIdeaPointOnEllipse.y),
                 end = Offset((subIdeaPointOnEllipse + arrowVector1).x, (subIdeaPointOnEllipse + arrowVector1).y),
                 color = subIdea.color,
@@ -186,6 +219,15 @@ class MMIdea(
                 end = Offset((subIdeaPointOnEllipse + arrowVector2).x, (subIdeaPointOnEllipse + arrowVector2).y),
                 color = subIdea.color,
                 strokeWidth = stroke / 3
+            )
+
+            drawLine(
+                start = Offset(subIdeaPointOnEllipse.x, subIdeaPointOnEllipse.y),
+                end = Offset(
+                    (subIdeaPointOnEllipse - vectorToSubIdea * 0.1f).x,
+                    (subIdeaPointOnEllipse - vectorToSubIdea * 0.1f).y),
+                color = subIdea.color,
+                strokeWidth = stroke
             )
         }
     }
