@@ -1,4 +1,4 @@
-package com.github.netkex.mindmap
+package com.github.netkex.mindmap.common
 
 import org.jetbrains.skia.Point
 import kotlin.math.cos

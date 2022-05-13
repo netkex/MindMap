@@ -24,7 +24,7 @@
 
     <actions>
         <action id="com.github.netkex.mindmap.Panel"
-                class="com.github.netkex.mindmap.PanelAction"
+                class="com.github.netkex.mindmap.UI.PanelAction"
                 icon="AllIcons.Actions.Colors"
                 text="Mind Map">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
