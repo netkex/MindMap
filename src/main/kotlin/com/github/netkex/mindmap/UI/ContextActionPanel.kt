@@ -68,9 +68,8 @@ class ContextActionPanel {
     }
     private val switchToRemoveIdeaPanel: () -> Unit = {
         val curIdea = currentAttachedIdea
-        if (curIdea == null) {
-            closeAll()
-        } else {
+        closeAll()
+        if (curIdea != null) {
             Context.plan.value = Context.plan.value.removeIdea(curIdea)
         }
     }

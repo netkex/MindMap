@@ -202,8 +202,8 @@ class MMIdea(
             drawLine(
                 start = Offset(ideaPointOnEllipse.x, ideaPointOnEllipse.y),
                 end = Offset(
-                    (ideaPointOnEllipse + vectorToSubIdea * 0.1f).x,
-                    (ideaPointOnEllipse + vectorToSubIdea * 0.1f).y),
+                    (ideaPointOnEllipse + vectorToSubIdea * 0.03f).x,
+                    (ideaPointOnEllipse + vectorToSubIdea * 0.03f).y),
                 color = color,
                 strokeWidth = stroke
             )
@@ -224,8 +224,8 @@ class MMIdea(
             drawLine(
                 start = Offset(subIdeaPointOnEllipse.x, subIdeaPointOnEllipse.y),
                 end = Offset(
-                    (subIdeaPointOnEllipse - vectorToSubIdea * 0.1f).x,
-                    (subIdeaPointOnEllipse - vectorToSubIdea * 0.1f).y),
+                    (subIdeaPointOnEllipse - vectorToSubIdea * 0.03f).x,
+                    (subIdeaPointOnEllipse - vectorToSubIdea * 0.03f).y),
                 color = subIdea.color,
                 strokeWidth = stroke
             )
