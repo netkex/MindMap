@@ -158,6 +158,7 @@ class ContextActionPanel {
                     onClick = {
                         println("Was pressed ${color.first}")
                         idea.changeColor(color.second)
+                        Context.invokeUpdate()
                         closeAll()
                     },
                     shape = RoundedCornerShape(0),
@@ -196,6 +197,7 @@ class ContextActionPanel {
                         newIdea.changeText(text)
                         idea.addSubIdea(newIdea)
                         Context.plan = Context.plan.addIdea(newIdea)
+                        Context.invokeUpdate()
                         Pair("", true)
                     }
                 }
@@ -217,6 +219,7 @@ class ContextActionPanel {
                         closeAll()
 
                         idea.changeText(text)
+                        Context.invokeUpdate()
                         Pair("", true)
                     }
                 }
@@ -244,7 +247,13 @@ class ContextActionPanel {
                 Text(modifier = Modifier.align(Alignment.CenterHorizontally), text = windowText)
                 customTextField(
                     modifier = Modifier.background(Color(0xFFE0FFFF).copy(alpha = 0.5f)),
-                    onKeyEvent = onKeyEvent,
+                    onKeyEvent = { keyEvent, s ->
+                        if (keyEvent.key == Key.Semicolon) {
+                            Pair(s.dropLast(1), false)
+                        } else {
+                            onKeyEvent(keyEvent, s)
+                        }
+                    },
                     placeholderText = placeholderText
                 )
             }

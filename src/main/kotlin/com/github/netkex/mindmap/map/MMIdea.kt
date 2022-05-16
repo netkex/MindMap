@@ -22,10 +22,11 @@ class MMIdea(
     var text: String,
     posX_: Float,
     posY_: Float,
-    private var color: Color = Color.Magenta,
+    color_: Color = Color.Magenta,
     private val fontSize: Float = 25f,
     val stroke: Float = 8f
 ) {
+    private var color by mutableStateOf( color_ )
     private val subIdeas: MutableList<MMIdea> = mutableListOf()
     private val font = Font(Typeface.makeDefault()).apply { size = fontSize }
     private var textLine = TextLine.make(text, font)
@@ -97,9 +98,15 @@ class MMIdea(
         return MMIdea(text = text,
             posX_ = posX,
             posY_ = posY,
-            color = color,
+            color_ = color,
             fontSize = fontSize,
             stroke = stroke)
+    }
+
+    fun getDescription(): List<String> {
+        val itselfDescription = "text: $text; color: ${color.value}; X: $posX; Y: $posY"
+        val childrenDescription = subIdeas.map { it.getDescription() }.flatten().map { "\t" + it }
+        return listOf(itselfDescription) + childrenDescription
     }
 
     private fun recalculateWidth(): Float {

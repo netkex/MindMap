@@ -4,7 +4,7 @@ package com.github.netkex.mindmap.map
 //import java.util.*
 //import kotlin.jvm.Throws
 //
-//class MindMapParserException : Exception("MindMap Parsing error: incorrect input to parse")
+class MindMapParserException : Exception("MindMap Parsing error: incorrect input to parse")
 //class MMParser {
 //    private val tabLen = 4
 //    private val colorTabel = mapOf(

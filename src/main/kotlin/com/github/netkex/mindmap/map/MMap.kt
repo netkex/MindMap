@@ -10,3 +10,10 @@ fun MMap.removeIdea(idea: MMIdea): MMap {
 fun MMap.addIdea(idea: MMIdea): MMap {
     return this + idea
 }
+
+fun MMap.getDescription(): String {
+    return if (this.isEmpty())
+        "MindMap"
+    else
+        this[0].getDescription().fold("MindMap") { acc, it -> acc + "\n" + it}
+}

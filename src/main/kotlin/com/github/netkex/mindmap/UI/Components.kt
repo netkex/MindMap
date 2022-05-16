@@ -51,7 +51,10 @@ fun drawIdeaButton(idea: MMIdea, actionPanel: ContextActionPanel, canvasWidth: F
             }
             .size(width = butSizeXDp, height = butSizeYDp)
             .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
+                detectDragGestures(onDragEnd =
+                {
+                    Context.invokeUpdate()
+                }) { change, dragAmount ->
                     change.consumeAllChanges()
                     idea.posX += dragAmount.x / canvasWidth
                     idea.posY += dragAmount.y / canvasHeight
