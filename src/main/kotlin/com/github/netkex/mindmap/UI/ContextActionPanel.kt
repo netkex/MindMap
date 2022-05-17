@@ -49,6 +49,7 @@ val colorsList = listOf (
     Pair("Black", Color.Black),
     Pair("Gray", Color.Gray),
     Pair("Cyan", Color.Cyan))
+val colorMap = colorsList.toMap()
 val panelWidth = 150.dp
 val panelHeight = 75.dp
 
@@ -70,7 +71,7 @@ class ContextActionPanel {
         val curIdea = currentAttachedIdea
         closeAll()
         if (curIdea != null) {
-            Context.plan = Context.plan.removeIdea(curIdea)
+            Context.plan.removeIdea(curIdea)
         }
     }
     private val contextActionsMap = mapOf(
@@ -93,6 +94,7 @@ class ContextActionPanel {
     fun closeAll() {
         currentAttachedIdea = null
         currentActionState = ContextActionState.CLOSED
+        Context.windowProcessing.set(false)
     }
 
     @Composable
@@ -196,7 +198,7 @@ class ContextActionPanel {
                         newIdea.posY += 0.05f
                         newIdea.changeText(text)
                         idea.addSubIdea(newIdea)
-                        Context.plan = Context.plan.addIdea(newIdea)
+                        Context.plan.addIdea(newIdea)
                         Context.invokeUpdate()
                         Pair("", true)
                     }

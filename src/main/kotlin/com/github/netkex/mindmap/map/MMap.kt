@@ -1,14 +1,19 @@
 package com.github.netkex.mindmap.map
 
-typealias MMap = List<MMIdea>
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 
-fun MMap.removeIdea(idea: MMIdea): MMap {
+typealias MMap = SnapshotStateList<MMIdea>
+
+fun MMap.removeIdea(idea: MMIdea) {
     this.forEach { it.removeSubIdea(idea) }
-    return this.filter { it != idea }
+    this.remove(idea)
 }
 
-fun MMap.addIdea(idea: MMIdea): MMap {
-    return this + idea
+fun MMap.addIdea(idea: MMIdea) {
+    this.add(idea)
 }
 
 fun MMap.getDescription(): String {
@@ -16,4 +21,9 @@ fun MMap.getDescription(): String {
         "MindMap"
     else
         this[0].getDescription().fold("MindMap") { acc, it -> acc + "\n" + it}
+}
+
+fun MMap.replaceMap(list: List<MMIdea>) {
+    this.clear()
+    list.forEach { this.add(it) }
 }

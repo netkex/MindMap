@@ -5,14 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
+import com.github.netkex.mindmap.UI.colorsList
 import com.github.netkex.mindmap.common.*
 import org.jetbrains.skia.*
+import org.jetbrains.skia.Paint
 import kotlin.math.*
 
 
@@ -103,8 +103,14 @@ class MMIdea(
             stroke = stroke)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     fun getDescription(): List<String> {
-        val itselfDescription = "text: $text; color: ${color.value}; X: $posX; Y: $posY"
+        val colorString = if (color in colorsList.map { it.second }) {
+            colorsList.map { Pair(it.second, it.first) }.toMap()[color]
+        } else {
+            color.toArgb().toString(16).toUpperCase()
+        }
+        val itselfDescription = "text: $text; color: $colorString; X: $posX; Y: $posY"
         val childrenDescription = subIdeas.map { it.getDescription() }.flatten().map { "\t" + it }
         return listOf(itselfDescription) + childrenDescription
     }

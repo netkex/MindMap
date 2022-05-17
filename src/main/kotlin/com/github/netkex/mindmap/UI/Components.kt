@@ -40,6 +40,7 @@ fun drawIdeaButton(idea: MMIdea, actionPanel: ContextActionPanel, canvasWidth: F
             if (Context.plan.size != 1 && idea.isLeaf()) {
                 actionList += ContextActions.REMOVE_IDEA
             }
+            Context.windowProcessing.set(true)
             actionPanel.pressedIdeaButton(idea, actionList)
         },
         modifier = Modifier
@@ -51,13 +52,22 @@ fun drawIdeaButton(idea: MMIdea, actionPanel: ContextActionPanel, canvasWidth: F
             }
             .size(width = butSizeXDp, height = butSizeYDp)
             .pointerInput(Unit) {
-                detectDragGestures(onDragEnd =
-                {
+                detectDragGestures(
+                    onDragEnd = {
+                    println("Drag end")
+                    Context.windowProcessing.set(false)
+                    println("X: ${idea.posX}; text: ${idea.text}")
                     Context.invokeUpdate()
+                }, onDragStart = {
+                    Context.windowProcessing.set(true)
                 }) { change, dragAmount ->
                     change.consumeAllChanges()
-                    idea.posX += dragAmount.x / canvasWidth
-                    idea.posY += dragAmount.y / canvasHeight
+                    println("Drag, ${dragAmount.x} ${dragAmount.y}, ${Context.fileProcessing.get()}")
+                    if (!Context.fileProcessing.get()) {
+                        idea.posX += dragAmount.x / canvasWidth
+                        idea.posY += dragAmount.y / canvasHeight
+                        println("${idea.posX}   ${idea.posY}")
+                    }
                 }
             },
         colors = ButtonDefaults.buttonColors(Color.White),
