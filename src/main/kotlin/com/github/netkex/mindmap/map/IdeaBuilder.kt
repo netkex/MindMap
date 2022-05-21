@@ -1,12 +1,13 @@
 package com.github.netkex.mindmap.map
 
 import androidx.compose.ui.graphics.Color
+import com.github.netkex.mindmap.common.defaultIdeaColor
 
 class IdeaBuilder {
-    private var color = Color.Magenta
+    private var color = defaultIdeaColor
     private var posX = 0.5f
     private var posY = 0.5f
-    private var text = "Main"
+    private var text = "Main Idea"
 
     fun setColor(newColor: Color) {
         color = newColor

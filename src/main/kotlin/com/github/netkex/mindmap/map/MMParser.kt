@@ -1,8 +1,8 @@
 package com.github.netkex.mindmap.map
 
 import androidx.compose.ui.graphics.Color
-import com.github.netkex.mindmap.UI.colorMap
-import com.github.netkex.mindmap.UI.colorsList
+import com.github.netkex.mindmap.common.colorsList
+import com.github.netkex.mindmap.common.colorsMap
 import java.util.*
 import kotlin.jvm.Throws
 
@@ -57,7 +57,7 @@ class MMParser {
 
     private fun parseColor(builder: IdeaBuilder, colorString: String) {
         if (colorString in colorsList.map { it.first }) {
-            colorMap[colorString]?.let { builder.setColor(it) }
+            colorsMap[colorString]?.let { builder.setColor(it) }
         } else {
             try {
                 if (colorString.length < 6)

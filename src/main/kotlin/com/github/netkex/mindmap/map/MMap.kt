@@ -1,8 +1,5 @@
 package com.github.netkex.mindmap.map
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
 typealias MMap = SnapshotStateList<MMIdea>

@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import com.github.netkex.mindmap.UI.colorsList
 import com.github.netkex.mindmap.common.*
 import org.jetbrains.skia.*
 import org.jetbrains.skia.Paint
@@ -22,9 +21,9 @@ class MMIdea(
     var text: String,
     posX_: Float,
     posY_: Float,
-    color_: Color = Color.Magenta,
-    private val fontSize: Float = 25f,
-    val stroke: Float = 8f
+    color_: Color = defaultIdeaColor,
+    private val fontSize: Float = defaultIdeaFontSize,
+    val stroke: Float = defaultIdeaStroke
 ) {
     var alife by mutableStateOf( true )
     private var color by mutableStateOf( color_ )

@@ -25,6 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.github.netkex.mindmap.Context
+import com.github.netkex.mindmap.common.colorsList
+import com.github.netkex.mindmap.common.defaultPanelColor
+import com.github.netkex.mindmap.common.defaultPanelHeight
+import com.github.netkex.mindmap.common.defaultPanelWidth
 import com.github.netkex.mindmap.map.MMIdea
 import com.github.netkex.mindmap.map.addIdea
 import com.github.netkex.mindmap.map.removeIdea
@@ -40,20 +44,7 @@ enum class ContextActions {
 
 data class PanelMenuAction(val text: String, val onClick: () -> Unit)
 
-val colorsList = listOf (
-    Pair("Red", Color.Red),
-    Pair("Blue", Color.Blue),
-    Pair("Green", Color.Green),
-    Pair("Yellow", Color.Yellow),
-    Pair("Magenta", Color.Magenta),
-    Pair("Black", Color.Black),
-    Pair("Gray", Color.Gray),
-    Pair("Cyan", Color.Cyan))
-val colorMap = colorsList.toMap()
-val panelWidth = 150.dp
-val panelHeight = 75.dp
-
-class ContextActionPanel(context: Context) {
+class ContextActionPanel(private val context: Context) {
     private var currentAttachedIdea: MMIdea? by mutableStateOf( null )
     private var currentActionState by mutableStateOf( ContextActionState.CLOSED )
     private var mainMenuActionList: List<PanelMenuAction> by mutableStateOf( listOf() )
@@ -96,7 +87,7 @@ class ContextActionPanel(context: Context) {
     }
 
     @Composable
-    fun drawPanel(canvasWidth: Float, canvasHeight: Float) {
+    fun drawPanel() {
         if (currentActionState == ContextActionState.CLOSED)
             return
         val curIdea = let {
@@ -110,22 +101,22 @@ class ContextActionPanel(context: Context) {
         }
 
         when(currentActionState) {
-            ContextActionState.MAIN_MENU -> drawMaiMenu(curIdea, canvasWidth, canvasHeight)
-            ContextActionState.COLOR_MENU -> drawColorMenu(curIdea, canvasWidth, canvasHeight)
-            ContextActionState.NEW_IDEA_MENU -> drawNewIdeaMenu(curIdea, canvasWidth, canvasHeight)
-            ContextActionState.RENAME_MENU -> drawRenameMenu(curIdea, canvasWidth, canvasHeight)
+            ContextActionState.MAIN_MENU -> drawMaiMenu(curIdea)
+            ContextActionState.COLOR_MENU -> drawColorMenu(curIdea)
+            ContextActionState.NEW_IDEA_MENU -> drawNewIdeaMenu(curIdea)
+            ContextActionState.RENAME_MENU -> drawRenameMenu(curIdea)
             else -> {}
         }
     }
 
     @Composable
-    private fun drawMaiMenu(idea: MMIdea, canvasWidth: Float, canvasHeight: Float) {
+    private fun drawMaiMenu(idea: MMIdea) {
         LazyColumn(modifier = Modifier.offset {
             IntOffset(
-                (canvasWidth * idea.posX).roundToInt(),
-                (canvasHeight * idea.posY).roundToInt()
+                (context.actualWidth * idea.posX).roundToInt(),
+                (context.actualHeight * idea.posY).roundToInt()
             ) }
-            .size(panelWidth, panelHeight),
+            .size(defaultPanelWidth, defaultPanelHeight),
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             items(mainMenuActionList) { action ->
@@ -135,7 +126,7 @@ class ContextActionPanel(context: Context) {
                     border = null,
                     elevation = null,
                     contentPadding = PaddingValues(0.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xFFE0FFFF))) {
+                    colors = ButtonDefaults.buttonColors(defaultPanelColor)) {
                     Text(modifier = Modifier.padding(0.dp), text = action.text, textAlign = TextAlign.Left)
                     Spacer(modifier = Modifier.weight(1f))
                 }
@@ -144,13 +135,13 @@ class ContextActionPanel(context: Context) {
     }
 
     @Composable
-    private fun drawColorMenu(idea: MMIdea, canvasWidth: Float, canvasHeight: Float) {
+    private fun drawColorMenu(idea: MMIdea) {
         LazyColumn(modifier = Modifier.offset {
             IntOffset(
-                (canvasWidth * idea.posX).roundToInt(),
-                (canvasHeight * idea.posY).roundToInt()
+                (context.actualWidth * idea.posX).roundToInt(),
+                (context.actualHeight * idea.posY).roundToInt()
             ) }
-            .size(panelWidth, panelHeight),
+            .size(defaultPanelWidth, defaultPanelHeight),
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             items(colorsList) { color ->
@@ -163,8 +154,8 @@ class ContextActionPanel(context: Context) {
                     border = null,
                     elevation = null,
                     contentPadding = PaddingValues(0.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xFFE0FFFF))) {
-                    Canvas(modifier = Modifier.size(width = 10.dp, height = panelHeight)) {
+                    colors = ButtonDefaults.buttonColors(defaultPanelColor)) {
+                    Canvas(modifier = Modifier.size(width = 10.dp, height = defaultPanelHeight)) {
                         drawCircle(
                             radius = size.width / 2,
                             color = color.second,
@@ -180,8 +171,12 @@ class ContextActionPanel(context: Context) {
 
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
-    private fun drawNewIdeaMenu(idea: MMIdea, canvasWidth: Float, canvasHeight: Float) {
-        panelKeyBoard(idea, canvasWidth, canvasHeight, "Insert name of new idea", "New Idea Name") { keyEvent, text ->
+    private fun drawNewIdeaMenu(idea: MMIdea) {
+        panelKeyBoard(idea,
+            context.actualWidth,
+            context.actualHeight,
+            "Insert name of new idea",
+            "New Idea Name") { keyEvent, text ->
             when {
                 (keyEvent.key == Key.Enter) -> {
                     if (text == "") {
@@ -204,8 +199,12 @@ class ContextActionPanel(context: Context) {
 
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
-    private fun drawRenameMenu(idea: MMIdea, canvasWidth: Float, canvasHeight: Float) {
-        panelKeyBoard(idea, canvasWidth, canvasHeight, "Insert name of idea", "Idea New Name") { keyEvent, text ->
+    private fun drawRenameMenu(idea: MMIdea) {
+        panelKeyBoard(idea,
+            context.actualWidth,
+            context.actualHeight,
+            "Insert name of idea",
+            "Idea New Name") { keyEvent, text ->
             when {
                 (keyEvent.key == Key.Enter) -> {
                     if (text == "") {
@@ -235,12 +234,12 @@ class ContextActionPanel(context: Context) {
                 (canvasWidth * idea.posX).roundToInt(),
                 (canvasHeight * idea.posY).roundToInt())
         }
-            .width(panelWidth)
-            .background(color = Color(0xFFE0FFFF))) {
+            .width(defaultPanelWidth)
+            .background(color = defaultPanelColor)) {
             Column(Modifier.fillMaxWidth(), Arrangement.spacedBy(5.dp)) {
                 Text(modifier = Modifier.align(Alignment.CenterHorizontally), text = windowText)
                 customTextField(
-                    modifier = Modifier.background(Color(0xFFE0FFFF).copy(alpha = 0.5f)),
+                    modifier = Modifier.background(defaultPanelColor.copy(alpha = 0.5f)),
                     onKeyEvent = { keyEvent, s ->
                         if (keyEvent.key == Key.Semicolon) {
                             Pair(s.dropLast(1), false)

@@ -3,7 +3,6 @@ package com.github.netkex.mindmap.UI
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -12,29 +11,27 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import com.github.netkex.mindmap.Context
+import com.github.netkex.mindmap.common.buttonSizeCoefficient
 import com.github.netkex.mindmap.map.MMIdea
-import com.github.netkex.mindmap.map.MMap
 import kotlin.math.roundToInt
 
 @Composable
 fun drawIdeaButton(idea: MMIdea,
                    actionPanel: ContextActionPanel,
-                   canvasWidth: Float,
-                   canvasHeight: Float) {
-    val butSizeX = (idea.width + idea.stroke) * 1.1
-    val butSizeY = (idea.height + idea.stroke) * 1.1
+                   context: Context) {
+    val butSizeX = (idea.width + idea.stroke) * buttonSizeCoefficient
+    val butSizeY = (idea.height + idea.stroke) * buttonSizeCoefficient
     val butSizeXDp = with(LocalDensity.current) {
         butSizeX.toInt().toDp()
     }
@@ -54,16 +51,16 @@ fun drawIdeaButton(idea: MMIdea,
             modifier = Modifier
                 .offset {
                     IntOffset(
-                        (canvasWidth * idea.posX - butSizeX / 2).roundToInt(),
-                        (canvasHeight * idea.posY - butSizeY / 2).roundToInt()
+                        (context.actualWidth * idea.posX - butSizeX / 2).roundToInt(),
+                        (context.actualHeight * idea.posY - butSizeY / 2).roundToInt()
                     )
                 }
                 .size(width = butSizeXDp, height = butSizeYDp)
                 .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount ->
+                    detectDragGestures { change: PointerInputChange, dragAmount: Offset ->
                         change.consumeAllChanges()
-                        idea.posX += dragAmount.x / canvasWidth
-                        idea.posY += dragAmount.y / canvasHeight
+                        idea.posX += dragAmount.x / context.actualWidth
+                        idea.posY += dragAmount.y / context.actualHeight
                     }
                 },
             colors = ButtonDefaults.buttonColors(Color.White),
