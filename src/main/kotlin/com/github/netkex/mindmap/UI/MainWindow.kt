@@ -56,12 +56,6 @@ fun mindMapApp(context: Context) {
             }
 
             actionPanel.drawPanel()
-            Row(verticalAlignment = Alignment.Top, modifier = Modifier.fillMaxSize()) {
-                Spacer(modifier = Modifier.size(1.dp))
-                toolBarButton("Save") { context.invokeUpdate() }
-                toolBarButton("Load") { context.updatePlan() }
-                Spacer(modifier = Modifier.weight(1f))
-            }
         }
     }
 }
