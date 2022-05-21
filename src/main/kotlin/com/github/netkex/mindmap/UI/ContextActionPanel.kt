@@ -25,10 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.github.netkex.mindmap.Context
-import com.github.netkex.mindmap.common.colorsList
-import com.github.netkex.mindmap.common.defaultPanelColor
-import com.github.netkex.mindmap.common.defaultPanelHeight
-import com.github.netkex.mindmap.common.defaultPanelWidth
+import com.github.netkex.mindmap.common.*
 import com.github.netkex.mindmap.map.MMIdea
 import com.github.netkex.mindmap.map.addIdea
 import com.github.netkex.mindmap.map.removeIdea

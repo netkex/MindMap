@@ -17,6 +17,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.wm.ToolWindowManager
 import javax.swing.JComponent
 import com.github.netkex.mindmap.Context
+import com.github.netkex.mindmap.OwnerState
 import com.github.netkex.mindmap.common.standardWindowHeight
 import com.github.netkex.mindmap.common.standardWindowWidth
 import com.intellij.openapi.project.DumbAwareAction
@@ -33,6 +34,12 @@ fun mindMapApp(context: Context) {
                     actionPanel.closeAll()
                 }
             }) {
+
+            if (context.getUpdateFileFlag()) {
+                context.updatePlan()
+                context.setUpdateFileFlag(false)
+                context.setOwnerFlag(OwnerState.Nobody)
+            }
 
             context.plan.forEach { idea ->
                 drawIdeaButton(idea, actionPanel, context)
