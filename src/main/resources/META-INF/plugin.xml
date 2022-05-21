@@ -5,14 +5,29 @@
     <vendor>netkex</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.netkex.mindmap.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.netkex.mindmap.services.MyProjectService"/>
+        <toolWindow factoryClass="com.github.netkex.mindmap.ComposeToolWindow"
+                    id="MindMap"
+                    icon="AllIcons.Actions.Colors"
+                    anchor="right"/>
+        <localInspection language="TEXT"
+                         displayName="SDK: import used"
+                         groupPath="Kotlin"
+                         groupBundle="messages.InspectionsBundle"
+                         groupKey="group.names.probable.bugs"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="com.github.netkex.mindmap.MindMapConstructorInteractor"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.netkex.mindmap.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <actions>
+        <action id="com.github.netkex.mindmap.UI.MainWindow"
+                class="com.github.netkex.mindmap.UI.WindowAction"
+                icon="AllIcons.Actions.Colors"
+                text="Mind Map">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>
