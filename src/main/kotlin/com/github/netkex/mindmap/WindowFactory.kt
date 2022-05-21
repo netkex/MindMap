@@ -15,29 +15,30 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
-
 object Context {
     var plan: MMap = mutableStateListOf()
     var file: VirtualFile? = null
-    lateinit var composeThread: Thread
     var fileProcessing: AtomicBoolean = AtomicBoolean(false)
     var windowProcessing: AtomicBoolean = AtomicBoolean(false)
+    val parser = MMParser()
 
     fun invokeUpdate() {
-        for (idea in plan) {
-            println("${idea.text}: ${idea.hashCode()} ${idea.javaClass.name}")
-        }
-        if (fileProcessing.get())
-            return
-        windowProcessing.set(true)
-        val planDescription = plan.getDescription()
-        println(planDescription)
         val curFile = file ?: return
+        val planDescription = plan.getDescription()
         ApplicationManager.getApplication().runWriteAction {
             VfsUtil.saveText(curFile, planDescription)
-            windowProcessing.set(false)
             VfsUtil.markDirtyAndRefresh(true, true, true, curFile)
         }
+    }
+
+    fun updatePlan() {
+        val curFile = file ?: return
+        val fileText = VfsUtil.loadText(curFile)
+        try {
+            val plan = parser.parse(fileText)
+            Context.plan.replaceMap(plan)
+            println("MindMap Plan was updated by file ${curFile.name}")
+        } catch (e: MindMapParserException) { }
     }
 }
 
@@ -46,7 +47,7 @@ class ComposeToolWindow : ToolWindowFactory {
         println("Start Plugin")
         val mainIdea = MMIdea("Main idea", 0.5f, 0.5f)
         val plan = listOf( mainIdea )
-        Context.plan.replaceMap( plan )
+        Context.plan.replaceMap(plan)
         val content = ContentFactory.SERVICE.getInstance().createContent(
             WindowAction.createPanel(Context),
             "MindMap",

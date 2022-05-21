@@ -3,6 +3,7 @@ package com.github.netkex.mindmap.UI
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -25,7 +26,10 @@ import com.github.netkex.mindmap.map.MMIdea
 import kotlin.math.roundToInt
 
 @Composable
-fun drawIdeaButton(idea: MMIdea, actionPanel: ContextActionPanel, canvasWidth: Float, canvasHeight: Float) {
+fun drawIdeaButton(idea: MMIdea,
+                   actionPanel: ContextActionPanel,
+                   canvasWidth: Float,
+                   canvasHeight: Float) {
     val butSizeX = (idea.width + idea.stroke) * 1.1
     val butSizeY = (idea.height + idea.stroke) * 1.1
     val butSizeXDp = with(LocalDensity.current) {
@@ -34,49 +38,50 @@ fun drawIdeaButton(idea: MMIdea, actionPanel: ContextActionPanel, canvasWidth: F
     val butSizeYDp = with(LocalDensity.current) {
         butSizeY.toInt().toDp()
     }
-    Button(
-        onClick = {
-            val actionList = mutableListOf(ContextActions.CHANGE_COLOR, ContextActions.ADD_IDEA, ContextActions.RENAME)
-            if (Context.plan.size != 1 && idea.isLeaf()) {
-                actionList += ContextActions.REMOVE_IDEA
-            }
-            Context.windowProcessing.set(true)
-            actionPanel.pressedIdeaButton(idea, actionList)
-        },
-        modifier = Modifier
-            .offset {
-                IntOffset(
-                    (canvasWidth * idea.posX - butSizeX / 2).roundToInt(),
-                    (canvasHeight * idea.posY - butSizeY / 2).roundToInt()
-                )
-            }
-            .size(width = butSizeXDp, height = butSizeYDp)
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragEnd = {
-                    println("Drag end")
-                    Context.windowProcessing.set(false)
-                    println("X: ${idea.posX}; text: ${idea.text}")
-                    Context.invokeUpdate()
-                }, onDragStart = {
-                    Context.windowProcessing.set(true)
-                }) { change, dragAmount ->
-                    change.consumeAllChanges()
-                    println("Drag, ${dragAmount.x} ${dragAmount.y}, ${Context.fileProcessing.get()}")
-                    if (!Context.fileProcessing.get()) {
-                        idea.posX += dragAmount.x / canvasWidth
-                        idea.posY += dragAmount.y / canvasHeight
-                        println("${idea.posX}   ${idea.posY}")
-                    }
+    println("I was drown, button: ${idea.text}")
+    if (idea.alife) {
+        Button(
+            onClick = {
+                val actionList =
+                    mutableListOf(ContextActions.CHANGE_COLOR, ContextActions.ADD_IDEA, ContextActions.RENAME)
+                if (Context.plan.size != 1 && idea.isLeaf()) {
+                    actionList += ContextActions.REMOVE_IDEA
                 }
+                actionPanel.pressedIdeaButton(idea, actionList)
             },
-        colors = ButtonDefaults.buttonColors(Color.White),
-        border = null,
-        elevation = null,
-        contentPadding = PaddingValues(0.dp)
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            idea.drawBody(this)
+            modifier = Modifier
+                .offset {
+                    IntOffset(
+                        (canvasWidth * idea.posX - butSizeX / 2).roundToInt(),
+                        (canvasHeight * idea.posY - butSizeY / 2).roundToInt()
+                    )
+                }
+                .size(width = butSizeXDp, height = butSizeYDp)
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragEnd = {
+                            println("Drag end")
+                            println("X: ${idea.posX}; text: ${idea.text}")
+                        }, onDragStart = {
+                            Context.windowProcessing.set(true)
+                        }) { change, dragAmount ->
+                        change.consumeAllChanges()
+                        println("Drag, ${dragAmount.x} ${dragAmount.y}, ${idea.hashCode()}, ${idea.text}")
+                        if (!Context.fileProcessing.get()) {
+                            idea.posX += dragAmount.x / canvasWidth
+                            idea.posY += dragAmount.y / canvasHeight
+                            println("${idea.posX}   ${idea.posY}")
+                        }
+                    }
+                },
+            colors = ButtonDefaults.buttonColors(Color.White),
+            border = null,
+            elevation = null,
+            contentPadding = PaddingValues(0.dp)
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                idea.drawBody(this)
+            }
         }
     }
 }

@@ -8,22 +8,24 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 typealias MMap = SnapshotStateList<MMIdea>
 
 fun MMap.removeIdea(idea: MMIdea) {
-    this.forEach { it.removeSubIdea(idea) }
-    this.remove(idea)
+    idea.alife = false
 }
 
 fun MMap.addIdea(idea: MMIdea) {
+    idea.alife = true
     this.add(idea)
 }
 
 fun MMap.getDescription(): String {
-    return if (this.isEmpty())
+    val curMap = this.filter { it.alife }
+    return if (curMap.isEmpty())
         "MindMap"
     else
-        this[0].getDescription().fold("MindMap") { acc, it -> acc + "\n" + it}
+        curMap[0].getDescription().fold("MindMap") { acc, it -> acc + "\n" + it}
 }
 
 fun MMap.replaceMap(list: List<MMIdea>) {
-    this.clear()
-    list.forEach { this.add(it) }
+    this.forEach { it.alife = false }
+    list.forEach { it.alife = true }
+    this.addAll(list)
 }

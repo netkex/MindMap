@@ -26,6 +26,7 @@ class MMIdea(
     private val fontSize: Float = 25f,
     val stroke: Float = 8f
 ) {
+    var alife by mutableStateOf( true )
     private var color by mutableStateOf( color_ )
     private val subIdeas: MutableList<MMIdea> = mutableListOf()
     private val font = Font(Typeface.makeDefault()).apply { size = fontSize }
@@ -88,6 +89,7 @@ class MMIdea(
         subIdeas.forEach { subIdea ->
             drawEdgeTo(drawScope, subIdea)
         }
+        subIdeas.removeIf { !it.alife }
     }
 
     fun isLeaf(): Boolean {
@@ -146,29 +148,31 @@ class MMIdea(
     }
 
     private fun drawEdgeTo(drawScope: DrawScope, subIdea: MMIdea) {
-        val windowWidth = drawScope.size.width
-        val windowHeight = drawScope.size.height
+        if  (subIdea.alife) {
+            val windowWidth = drawScope.size.width
+            val windowHeight = drawScope.size.height
 
-        val ideaCenterX = posX * windowWidth
-        val ideaCenterY = posY * windowHeight
-        val subIdeaCenterX = subIdea.posX * windowWidth
-        val subIdeaCenterY = subIdea.posY * windowHeight
+            val ideaCenterX = posX * windowWidth
+            val ideaCenterY = posY * windowHeight
+            val subIdeaCenterX = subIdea.posX * windowWidth
+            val subIdeaCenterY = subIdea.posY * windowHeight
 
-        val angleToSubIdea = atan2(subIdeaCenterY - ideaCenterY, subIdeaCenterX - ideaCenterX)
-        val angleToIdea = atan2(ideaCenterY - subIdeaCenterY, ideaCenterX - subIdeaCenterX)
-        val ideaRadiusEllipse = calcRadiusEllipse(semiMajorAxe, semiMinorAxe, angleToSubIdea)
-        val subIdeaRadiusEllipse = calcRadiusEllipse(subIdea.semiMajorAxe, subIdea.semiMinorAxe, angleToIdea)
+            val angleToSubIdea = atan2(subIdeaCenterY - ideaCenterY, subIdeaCenterX - ideaCenterX)
+            val angleToIdea = atan2(ideaCenterY - subIdeaCenterY, ideaCenterX - subIdeaCenterX)
+            val ideaRadiusEllipse = calcRadiusEllipse(semiMajorAxe, semiMinorAxe, angleToSubIdea)
+            val subIdeaRadiusEllipse = calcRadiusEllipse(subIdea.semiMajorAxe, subIdea.semiMinorAxe, angleToIdea)
 
-        val ideaPointOnEllipse = Point(
-            ideaCenterX + ideaRadiusEllipse * cos(angleToSubIdea),
-            ideaCenterY + ideaRadiusEllipse * sin(angleToSubIdea)
-        )
-        val subIdeaPointOnEllipse = Point(
-            subIdeaCenterX + subIdeaRadiusEllipse * cos(angleToIdea),
-            subIdeaCenterY + subIdeaRadiusEllipse * sin(angleToIdea)
-        )
+            val ideaPointOnEllipse = Point(
+                ideaCenterX + ideaRadiusEllipse * cos(angleToSubIdea),
+                ideaCenterY + ideaRadiusEllipse * sin(angleToSubIdea)
+            )
+            val subIdeaPointOnEllipse = Point(
+                subIdeaCenterX + subIdeaRadiusEllipse * cos(angleToIdea),
+                subIdeaCenterY + subIdeaRadiusEllipse * sin(angleToIdea)
+            )
 
-        drawArrowTo(drawScope, subIdea, ideaPointOnEllipse, subIdeaPointOnEllipse, angleToSubIdea)
+            drawArrowTo(drawScope, subIdea, ideaPointOnEllipse, subIdeaPointOnEllipse, angleToSubIdea)
+        }
     }
 
     private fun drawArrowTo(

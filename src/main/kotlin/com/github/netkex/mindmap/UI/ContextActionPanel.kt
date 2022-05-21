@@ -53,7 +53,7 @@ val colorMap = colorsList.toMap()
 val panelWidth = 150.dp
 val panelHeight = 75.dp
 
-class ContextActionPanel {
+class ContextActionPanel(context: Context) {
     private var currentAttachedIdea: MMIdea? by mutableStateOf( null )
     private var currentActionState by mutableStateOf( ContextActionState.CLOSED )
     private var mainMenuActionList: List<PanelMenuAction> by mutableStateOf( listOf() )
@@ -71,7 +71,7 @@ class ContextActionPanel {
         val curIdea = currentAttachedIdea
         closeAll()
         if (curIdea != null) {
-            Context.plan.removeIdea(curIdea)
+            context.plan.removeIdea(curIdea)
         }
     }
     private val contextActionsMap = mapOf(
@@ -160,7 +160,6 @@ class ContextActionPanel {
                     onClick = {
                         println("Was pressed ${color.first}")
                         idea.changeColor(color.second)
-                        Context.invokeUpdate()
                         closeAll()
                     },
                     shape = RoundedCornerShape(0),
@@ -199,7 +198,6 @@ class ContextActionPanel {
                         newIdea.changeText(text)
                         idea.addSubIdea(newIdea)
                         Context.plan.addIdea(newIdea)
-                        Context.invokeUpdate()
                         Pair("", true)
                     }
                 }
@@ -221,7 +219,6 @@ class ContextActionPanel {
                         closeAll()
 
                         idea.changeText(text)
-                        Context.invokeUpdate()
                         Pair("", true)
                     }
                 }

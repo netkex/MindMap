@@ -1,37 +1,37 @@
 package com.github.netkex.mindmap.UI
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.wm.ToolWindowManager
 import javax.swing.JComponent
 import com.github.netkex.mindmap.Context
+import com.github.netkex.mindmap.map.MMIdea
 import com.intellij.openapi.project.DumbAwareAction
-import kotlin.math.roundToInt
+
+val kekk = MMIdea("YEHOO", 0.5f, 0.5f)
 
 
+@Preview
 @Composable
 fun mindMapApp(context: Context) {
-    Context.composeThread = Thread.currentThread()
-    val localKek = remember { Context.plan }
-
     Surface(modifier = Modifier) {
-        val actionPanel by remember { mutableStateOf(ContextActionPanel()) }
+        val actionPanel = ContextActionPanel(context)
         BoxWithConstraints(modifier = Modifier.fillMaxHeight().fillMaxWidth().background(color = Color.White)
             .pointerInput(Unit) {
                 detectTapGestures { _ ->
@@ -41,22 +41,37 @@ fun mindMapApp(context: Context) {
             var canvasWidth_ by remember { mutableStateOf(constraints.maxWidth.toFloat()) }
             var canvasHeight_ by remember { mutableStateOf(constraints.maxHeight.toFloat()) }
 
-            for (idea in localKek) {
+            context.plan.forEach { idea ->
                 drawIdeaButton(idea, actionPanel, canvasWidth_, canvasHeight_)
             }
-
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val canvasWidth = size.width
                 val canvasHeight = size.height
                 canvasWidth_ = canvasWidth
                 canvasHeight_ = canvasHeight
 
-                localKek.forEach { idea ->
+                context.plan.forEach { idea ->
                     idea.drawEdges(this)
                 }
             }
 
             actionPanel.drawPanel(canvasWidth_, canvasHeight_)
+            Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxSize()) {
+                Spacer(modifier = Modifier.weight(1f))
+                Button(modifier = Modifier.size(width = 150.dp, height = 50.dp), onClick = {
+                    context.updatePlan()
+                }) {
+                    Text("Load from file")
+                }
+                Spacer(modifier = Modifier.size(5.dp))
+                Button(
+                    modifier = Modifier.size(width = 150.dp, height = 50.dp),
+                    onClick = {
+                        context.invokeUpdate()
+                    }) {
+                    Text("Load to file")
+                }
+            }
         }
     }
 }
