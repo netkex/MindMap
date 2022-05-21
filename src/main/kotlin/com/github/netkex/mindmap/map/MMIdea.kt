@@ -86,6 +86,8 @@ class MMIdea(
     }
 
     fun drawEdges(drawScope: DrawScope) {
+        if (!alife)
+            return
         subIdeas.forEach { subIdea ->
             drawEdgeTo(drawScope, subIdea)
         }

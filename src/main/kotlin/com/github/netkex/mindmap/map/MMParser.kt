@@ -1,6 +1,5 @@
 package com.github.netkex.mindmap.map
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import com.github.netkex.mindmap.UI.colorMap
 import com.github.netkex.mindmap.UI.colorsList
@@ -9,14 +8,6 @@ import kotlin.jvm.Throws
 
 class MindMapParserException : Exception("MindMap Parsing error: incorrect input to parse")
 class MMParser {
-    private val colorTabel = mapOf(
-        Pair("red", Color.Red),
-        Pair("black", Color.Black),
-        Pair("white", Color.White),
-        Pair("magenta", Color.Magenta),
-        Pair("yellow", Color.Yellow),
-        Pair("blue", Color.Blue)
-    )
 
     @Throws(MindMapParserException::class)
     fun parse(input: String): List<MMIdea> {
@@ -31,10 +22,8 @@ class MMParser {
         val ideasStack = Stack<MMIdea>()
 
         lines.filter { !it.all { it == ' '} }.forEach { s ->
-            println("I am parsing idea: $s")
             val idea = parseIdea(s)
             val tabs = s.takeWhile { it == '\t' }.length
-            println(tabs)
             if (tabs > prevTabs + 1)
                 throw MindMapParserException()
             if (tabs > 0)

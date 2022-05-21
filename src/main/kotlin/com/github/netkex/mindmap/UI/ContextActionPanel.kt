@@ -58,7 +58,6 @@ class ContextActionPanel(context: Context) {
     private var currentActionState by mutableStateOf( ContextActionState.CLOSED )
     private var mainMenuActionList: List<PanelMenuAction> by mutableStateOf( listOf() )
     private val switchToColorPanel: () -> Unit = {
-        println("HEI! COLOR WAS CLICKED!")
         currentActionState = ContextActionState.COLOR_MENU
     }
     private val switchToAddIdeaPanel: () -> Unit = {
@@ -94,7 +93,6 @@ class ContextActionPanel(context: Context) {
     fun closeAll() {
         currentAttachedIdea = null
         currentActionState = ContextActionState.CLOSED
-        Context.windowProcessing.set(false)
     }
 
     @Composable
@@ -158,7 +156,6 @@ class ContextActionPanel(context: Context) {
             items(colorsList) { color ->
                 Button(modifier = Modifier.fillMaxWidth().height(25.dp),
                     onClick = {
-                        println("Was pressed ${color.first}")
                         idea.changeColor(color.second)
                         closeAll()
                     },
@@ -190,7 +187,6 @@ class ContextActionPanel(context: Context) {
                     if (text == "") {
                         Pair(text, false)
                     } else {
-                        println("New idea name: ${text}")
                         closeAll()
                         val newIdea = idea.copy()
                         newIdea.posX += 0.05f
@@ -215,7 +211,6 @@ class ContextActionPanel(context: Context) {
                     if (text == "") {
                         Pair(text, false)
                     } else {
-                        println("Idea new name: ${text}")
                         closeAll()
 
                         idea.changeText(text)

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -21,8 +22,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.github.netkex.mindmap.Context
 import com.github.netkex.mindmap.map.MMIdea
+import com.github.netkex.mindmap.map.MMap
 import kotlin.math.roundToInt
 
 @Composable
@@ -38,7 +41,6 @@ fun drawIdeaButton(idea: MMIdea,
     val butSizeYDp = with(LocalDensity.current) {
         butSizeY.toInt().toDp()
     }
-    println("I was drown, button: ${idea.text}")
     if (idea.alife) {
         Button(
             onClick = {
@@ -58,20 +60,10 @@ fun drawIdeaButton(idea: MMIdea,
                 }
                 .size(width = butSizeXDp, height = butSizeYDp)
                 .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragEnd = {
-                            println("Drag end")
-                            println("X: ${idea.posX}; text: ${idea.text}")
-                        }, onDragStart = {
-                            Context.windowProcessing.set(true)
-                        }) { change, dragAmount ->
+                    detectDragGestures { change, dragAmount ->
                         change.consumeAllChanges()
-                        println("Drag, ${dragAmount.x} ${dragAmount.y}, ${idea.hashCode()}, ${idea.text}")
-                        if (!Context.fileProcessing.get()) {
-                            idea.posX += dragAmount.x / canvasWidth
-                            idea.posY += dragAmount.y / canvasHeight
-                            println("${idea.posX}   ${idea.posY}")
-                        }
+                        idea.posX += dragAmount.x / canvasWidth
+                        idea.posY += dragAmount.y / canvasHeight
                     }
                 },
             colors = ButtonDefaults.buttonColors(Color.White),
@@ -83,6 +75,19 @@ fun drawIdeaButton(idea: MMIdea,
                 idea.drawBody(this)
             }
         }
+    }
+}
+
+@Composable
+fun toolBarButton(text: String, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier.height(30.dp),
+        onClick = onClick,
+        shape =  RoundedCornerShape(50),
+        border = null,
+        elevation = null,
+        contentPadding = PaddingValues(0.dp)) {
+        Text(text, fontSize = 13.sp, modifier = Modifier.padding(0.dp))
     }
 }
 

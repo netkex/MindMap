@@ -18,9 +18,7 @@ import kotlin.concurrent.thread
 object Context {
     var plan: MMap = mutableStateListOf()
     var file: VirtualFile? = null
-    var fileProcessing: AtomicBoolean = AtomicBoolean(false)
-    var windowProcessing: AtomicBoolean = AtomicBoolean(false)
-    val parser = MMParser()
+    private val parser = MMParser()
 
     fun invokeUpdate() {
         val curFile = file ?: return
