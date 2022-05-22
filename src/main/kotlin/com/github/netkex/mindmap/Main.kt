@@ -14,7 +14,7 @@ fun main() {
     application {
         Window(
             onCloseRequest = ::exitApplication,
-            title = "Fifteen Puzzle",
+            title = "Mind Map",
             state = rememberWindowState(width = 480.dp, height = 720.dp)
         ) {
             mindMapApp(Context)
