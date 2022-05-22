@@ -20,6 +20,7 @@ import com.github.netkex.mindmap.Context
 import com.github.netkex.mindmap.OwnerState
 import com.github.netkex.mindmap.common.standardWindowHeight
 import com.github.netkex.mindmap.common.standardWindowWidth
+import com.github.netkex.mindmap.map.copy
 import com.intellij.openapi.project.DumbAwareAction
 
 
@@ -28,6 +29,7 @@ import com.intellij.openapi.project.DumbAwareAction
 fun mindMapApp(context: Context) {
     Surface(modifier = Modifier) {
         val actionPanel = ContextActionPanel(context)
+        val plan = context.plan.copy()
         BoxWithConstraints(modifier = Modifier.fillMaxHeight().fillMaxWidth().background(color = Color.White)
             .pointerInput(Unit) {
                 detectTapGestures { _ ->
@@ -35,13 +37,15 @@ fun mindMapApp(context: Context) {
                 }
             }) {
 
-            if (context.getUpdateFileFlag()) {
-                context.updatePlan()
-                context.setUpdateFileFlag(false)
-                context.setOwnerFlag(OwnerState.Nobody)
+            if (context.getUpdateFileFlag() != 0) {
+                val result = context.updatePlan()
+                if (result) {
+                    context.setUpdateFileFlag(0)
+                    context.setOwnerFlag(OwnerState.Nobody)
+                }
             }
 
-            context.plan.forEach { idea ->
+            plan.forEach { idea ->
                 drawIdeaButton(idea, actionPanel, context)
             }
             Canvas(modifier = Modifier.fillMaxSize()) {
@@ -50,7 +54,7 @@ fun mindMapApp(context: Context) {
                 context.actualWidth = canvasWidth
                 context.actualHeight = canvasHeight
 
-                context.plan.forEach { idea ->
+                plan.forEach { idea ->
                     idea.drawEdges(this)
                 }
             }

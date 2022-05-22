@@ -26,3 +26,9 @@ fun MMap.replaceMap(list: List<MMIdea>) {
     list.forEach { it.alife = true }
     this.addAll(list)
 }
+
+fun MMap.copy(): List<MMIdea> {
+    val list = mutableListOf<MMIdea>()
+    list.addAll(this.toList())
+    return list
+}

@@ -83,7 +83,8 @@ class ContextActionPanel(private val context: Context) {
     fun closeAll() {
         currentAttachedIdea = null
         currentActionState = ContextActionState.CLOSED
-        context.setOwnerFlag(OwnerState.Nobody)
+        if (context.getOwnerFlag() != OwnerState.FileUpdate)
+            context.setOwnerFlag(OwnerState.Nobody)
     }
 
     @Composable

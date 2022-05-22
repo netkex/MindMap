@@ -15,7 +15,7 @@ class MindMapConstructorInteractor : LocalInspectionTool() {
             return arrayOf()
         }
         Context.setOwnerFlag(OwnerState.FileUpdate)
-        Context.setUpdateFileFlag(true)
+        Context.incUpdateFileFlag()
         return arrayOf()
     }
 }

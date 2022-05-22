@@ -22,7 +22,7 @@ object Context {
     var file: VirtualFile? = null
     var ownerFlag = OwnerState.Nobody
     val composeUpdated = AtomicBoolean(false)
-    var updateFromFileFlag by mutableStateOf( false )
+    var updateFromFileFlag by mutableStateOf( 0 )
     val lock = ReentrantLock()
     var actualWidth by mutableStateOf( standardWindowWidth.toFloat() )
     var actualHeight by mutableStateOf( standardWindowHeight.toFloat() )
@@ -41,15 +41,19 @@ object Context {
         }
     }
 
-    fun updatePlan() {
-        val curFile = file ?: return
+    fun updatePlan(): Boolean {
+        var successParsing = true
+        val curFile = file ?: return false
         try {
             val plan = parser.parse(fileText)
             synchronized(lock) {
                 Context.plan.replaceMap(plan)
             }
             println("MindMap Plan was updated by file ${curFile.name}")
-        } catch (e: MindMapParserException) { }
+        } catch (e: MindMapParserException) {
+            successParsing = false
+        }
+        return successParsing
     }
 
     @JvmName("getOwnerFlag1")
@@ -67,15 +71,21 @@ object Context {
         }
     }
 
-    fun getUpdateFileFlag(): Boolean {
+    fun getUpdateFileFlag(): Int {
         return synchronized(lock) {
             updateFromFileFlag
         }
     }
 
-    fun setUpdateFileFlag(value: Boolean) {
+    fun setUpdateFileFlag(value: Int) {
         synchronized(lock) {
             updateFromFileFlag = value
+        }
+    }
+
+    fun incUpdateFileFlag() {
+        synchronized(lock) {
+            updateFromFileFlag += 1
         }
     }
 }
