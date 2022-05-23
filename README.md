@@ -20,4 +20,4 @@ Plugin based on the [IntelliJ Platform Plugin Template][template].
 
 ### Пример работы
 
-![](images/demo_final_L.gif)
+![](images/demo_work.gif)
