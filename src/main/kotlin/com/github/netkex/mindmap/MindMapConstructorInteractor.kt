@@ -9,6 +9,13 @@ class MindMapConstructorInteractor : LocalInspectionTool() {
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor> {
         cnt++
         Context.file = file.virtualFile
+        Context.fileText = file.text
+        if (Context.getOwnerFlag() == OwnerState.ComposeUpdate || Context.composeUpdated.get()) {
+            Context.composeUpdated.set(false)
+            return arrayOf()
+        }
+        Context.setOwnerFlag(OwnerState.FileUpdate)
+        Context.incUpdateFileFlag()
         return arrayOf()
     }
 }

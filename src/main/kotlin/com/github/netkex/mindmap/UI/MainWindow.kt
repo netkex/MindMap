@@ -17,8 +17,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.wm.ToolWindowManager
 import javax.swing.JComponent
 import com.github.netkex.mindmap.Context
+import com.github.netkex.mindmap.OwnerState
 import com.github.netkex.mindmap.common.standardWindowHeight
 import com.github.netkex.mindmap.common.standardWindowWidth
+import com.github.netkex.mindmap.map.copy
 import com.intellij.openapi.project.DumbAwareAction
 
 
@@ -27,6 +29,7 @@ import com.intellij.openapi.project.DumbAwareAction
 fun mindMapApp(context: Context) {
     Surface(modifier = Modifier) {
         val actionPanel = ContextActionPanel(context)
+        val plan = context.plan.copy()
         BoxWithConstraints(modifier = Modifier.fillMaxHeight().fillMaxWidth().background(color = Color.White)
             .pointerInput(Unit) {
                 detectTapGestures { _ ->
@@ -34,7 +37,15 @@ fun mindMapApp(context: Context) {
                 }
             }) {
 
-            context.plan.forEach { idea ->
+            if (context.getUpdateFileFlag() != 0) {
+                val result = context.updatePlan()
+                if (result) {
+                    context.setUpdateFileFlag(0)
+                    context.setOwnerFlag(OwnerState.Nobody)
+                }
+            }
+
+            plan.forEach { idea ->
                 drawIdeaButton(idea, actionPanel, context)
             }
             Canvas(modifier = Modifier.fillMaxSize()) {
@@ -43,18 +54,12 @@ fun mindMapApp(context: Context) {
                 context.actualWidth = canvasWidth
                 context.actualHeight = canvasHeight
 
-                context.plan.forEach { idea ->
+                plan.forEach { idea ->
                     idea.drawEdges(this)
                 }
             }
 
             actionPanel.drawPanel()
-            Row(verticalAlignment = Alignment.Top, modifier = Modifier.fillMaxSize()) {
-                Spacer(modifier = Modifier.size(1.dp))
-                toolBarButton("Save") { context.invokeUpdate() }
-                toolBarButton("Load") { context.updatePlan() }
-                Spacer(modifier = Modifier.weight(1f))
-            }
         }
     }
 }

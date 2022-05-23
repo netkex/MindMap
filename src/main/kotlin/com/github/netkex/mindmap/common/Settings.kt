@@ -8,6 +8,7 @@ val standardWindowWidth = 1920
 val standardWindowHeight = 1080
 
 const val buttonSizeCoefficient = 1.1
+const val tabLen = 4
 
 val lightCyanColor = Color(0xFFE0FFFF)
 val colorsList = listOf (

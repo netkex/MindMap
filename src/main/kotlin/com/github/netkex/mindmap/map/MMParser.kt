@@ -3,6 +3,7 @@ package com.github.netkex.mindmap.map
 import androidx.compose.ui.graphics.Color
 import com.github.netkex.mindmap.common.colorsList
 import com.github.netkex.mindmap.common.colorsMap
+import com.github.netkex.mindmap.common.tabLen
 import java.util.*
 import kotlin.jvm.Throws
 
@@ -22,8 +23,10 @@ class MMParser {
         val ideasStack = Stack<MMIdea>()
 
         lines.filter { !it.all { it == ' '} }.forEach { s ->
+            if (s.last() != ';')
+                throw MindMapParserException()
             val idea = parseIdea(s)
-            val tabs = s.takeWhile { it == '\t' }.length
+            val tabs = s.takeWhile { it == ' ' }.length / tabLen
             if (tabs > prevTabs + 1)
                 throw MindMapParserException()
             if (tabs > 0)
@@ -40,7 +43,7 @@ class MMParser {
 
     private fun parseIdea(line: String): MMIdea {
         val builder = IdeaBuilder()
-        val parts = line.split(";")
+        val parts = line.split(";").filter { it.isNotEmpty() }
         parts.forEach { part ->
             val head = removeSpaces( part.takeWhile { it != ':' }.toLowerCase() )
             val body = removeSpaces( part.takeLastWhile { it != ':' } )

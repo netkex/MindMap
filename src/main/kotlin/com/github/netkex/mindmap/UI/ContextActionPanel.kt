@@ -25,10 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.github.netkex.mindmap.Context
-import com.github.netkex.mindmap.common.colorsList
-import com.github.netkex.mindmap.common.defaultPanelColor
-import com.github.netkex.mindmap.common.defaultPanelHeight
-import com.github.netkex.mindmap.common.defaultPanelWidth
+import com.github.netkex.mindmap.OwnerState
+import com.github.netkex.mindmap.common.*
 import com.github.netkex.mindmap.map.MMIdea
 import com.github.netkex.mindmap.map.addIdea
 import com.github.netkex.mindmap.map.removeIdea
@@ -59,10 +57,11 @@ class ContextActionPanel(private val context: Context) {
     }
     private val switchToRemoveIdeaPanel: () -> Unit = {
         val curIdea = currentAttachedIdea
-        closeAll()
         if (curIdea != null) {
             context.plan.removeIdea(curIdea)
+            context.invokeUpdate()
         }
+        closeAll()
     }
     private val contextActionsMap = mapOf(
         Pair(ContextActions.CHANGE_COLOR, PanelMenuAction("Change color", switchToColorPanel)),
@@ -84,6 +83,8 @@ class ContextActionPanel(private val context: Context) {
     fun closeAll() {
         currentAttachedIdea = null
         currentActionState = ContextActionState.CLOSED
+        if (context.getOwnerFlag() != OwnerState.FileUpdate)
+            context.setOwnerFlag(OwnerState.Nobody)
     }
 
     @Composable
@@ -148,6 +149,7 @@ class ContextActionPanel(private val context: Context) {
                 Button(modifier = Modifier.fillMaxWidth().height(25.dp),
                     onClick = {
                         idea.changeColor(color.second)
+                        context.invokeUpdate()
                         closeAll()
                     },
                     shape = RoundedCornerShape(0),
@@ -182,13 +184,14 @@ class ContextActionPanel(private val context: Context) {
                     if (text == "") {
                         Pair(text, false)
                     } else {
-                        closeAll()
                         val newIdea = idea.copy()
                         newIdea.posX += 0.05f
                         newIdea.posY += 0.05f
                         newIdea.changeText(text)
                         idea.addSubIdea(newIdea)
-                        Context.plan.addIdea(newIdea)
+                        context.plan.addIdea(newIdea)
+                        context.invokeUpdate()
+                        closeAll()
                         Pair("", true)
                     }
                 }
@@ -210,9 +213,9 @@ class ContextActionPanel(private val context: Context) {
                     if (text == "") {
                         Pair(text, false)
                     } else {
-                        closeAll()
-
                         idea.changeText(text)
+                        context.invokeUpdate()
+                        closeAll()
                         Pair("", true)
                     }
                 }

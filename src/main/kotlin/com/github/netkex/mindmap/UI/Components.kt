@@ -22,8 +22,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
 import com.github.netkex.mindmap.Context
+import com.github.netkex.mindmap.OwnerState
 import com.github.netkex.mindmap.common.buttonSizeCoefficient
 import com.github.netkex.mindmap.map.MMIdea
+import com.intellij.openapi.application.constrainedReadAction
 import kotlin.math.roundToInt
 
 @Composable
@@ -40,7 +42,12 @@ fun drawIdeaButton(idea: MMIdea,
     }
     if (idea.alife) {
         Button(
-            onClick = {
+            onClick = action@{
+                if (context.getOwnerFlag() == OwnerState.FileUpdate) {
+                    return@action
+                } else {
+                    context.setOwnerFlag(OwnerState.ComposeUpdate)
+                }
                 val actionList =
                     mutableListOf(ContextActions.CHANGE_COLOR, ContextActions.ADD_IDEA, ContextActions.RENAME)
                 if (Context.plan.size != 1 && idea.isLeaf()) {
@@ -57,10 +64,22 @@ fun drawIdeaButton(idea: MMIdea,
                 }
                 .size(width = butSizeXDp, height = butSizeYDp)
                 .pointerInput(Unit) {
-                    detectDragGestures { change: PointerInputChange, dragAmount: Offset ->
+                    detectDragGestures(onDragStart = {
+                        actionPanel.closeAll()
+                        if (context.getOwnerFlag() != OwnerState.FileUpdate) {
+                            context.setOwnerFlag(OwnerState.ComposeUpdate)
+                        }
+                    }, onDragEnd = {
+                        if (context.getOwnerFlag() != OwnerState.FileUpdate) {
+                            context.invokeUpdate()
+                            context.setOwnerFlag(OwnerState.Nobody)
+                        }
+                    }) { change: PointerInputChange, dragAmount: Offset ->
                         change.consumeAllChanges()
-                        idea.posX += dragAmount.x / context.actualWidth
-                        idea.posY += dragAmount.y / context.actualHeight
+                        if (context.getOwnerFlag() != OwnerState.FileUpdate) {
+                            idea.posX += dragAmount.x / context.actualWidth
+                            idea.posY += dragAmount.y / context.actualHeight
+                        }
                     }
                 },
             colors = ButtonDefaults.buttonColors(Color.White),

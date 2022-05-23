@@ -113,8 +113,8 @@ class MMIdea(
         } else {
             color.toArgb().toString(16).toUpperCase()
         }
-        val itselfDescription = "text: $text; color: $colorString; X: $posX; Y: $posY"
-        val childrenDescription = subIdeas.map { it.getDescription() }.flatten().map { "\t" + it }
+        val itselfDescription = "text: $text; color: $colorString; X: $posX; Y: $posY;"
+        val childrenDescription = subIdeas.map { it.getDescription() }.flatten().map { " ".repeat(tabLen) + it }
         return listOf(itselfDescription) + childrenDescription
     }
 
